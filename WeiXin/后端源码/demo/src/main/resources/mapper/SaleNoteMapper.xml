@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.school.dao.SaleNoteDao">
+
+    <select id="querySaleNote" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note order by id desc
+    </select>
+
+    <select id="waitList" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where stage='待确认'
+    </select>
+
+    <select id="checkList" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where stage='待审核'
+    </select>
+
+    <select id="chargeList" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where stage='待付款'
+    </select>
+
+    <select id="refundList" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where stage='已退货'
+    </select>
+
+    <select id="findById" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where  id=#{id}
+    </select>
+
+    <select id="findByClientId" resultType="com.school.entity.SaleNote">
+        select  * from t_sale_note where  client_id=#{clientId}
+    </select>
+
+    <insert id="insertSaleNote" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.school.entity.SaleNote">
+        insert into t_sale_note (id,store_id,client_id,price,stage,create_time)
+        values(#{id},#{storeId},#{clientId},#{price},"待确认",#{createTime})
+    </insert>
+
+    <update id="updateSaleNote" parameterType="com.school.entity.SaleNote">
+        update t_sale_note
+        <set>
+            <if test="storeId!=null">store_id=#{storeId},</if>
+            <if test="clientId!=null">client_id=#{clientId},</if>
+            <if test="cost!=null">cost=#{cost},</if>
+            <if test="price!=null">price=#{price},</if>
+            <if test="receivedPayment!=null">received_payment=#{receivedPayment},</if>
+            <if test="stage!=null">stage=#{stage}</if>
+            <if test="createBy!=null">create_by=#{createBy}</if>
+            <if test="createTime!=null">create_time=#{createTime}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="submitSaleNote" parameterType="com.school.entity.SaleNote">
+        update t_sale_note
+        <set> stage='待审核' </set>
+        where id=#{id}
+    </update>
+
+    <update id="checkSaleNote" parameterType="com.school.entity.SaleNote">
+        update t_sale_note
+        <set> stage='待付款' </set>
+        where id=#{id}
+    </update>
+
+    <update id="chargeSaleNote" parameterType="com.school.entity.SaleNote">
+        update t_sale_note
+        <set> stage='已完成' </set>
+        where id=#{id}
+    </update>
+
+    <update id="refundSaleNote" parameterType="com.school.entity.SaleNote">
+        update t_sale_note
+        <set> stage='已退货' </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteSaleNote">
+        delete  from t_sale_note where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.labdemo.mapper.UserDao">
+
+    <select id="findPermissionsByUserId" resultType="java.lang.String">
+        SELECT
+            tp.`name`
+        FROM
+            t_role_permission_map AS trpm
+                LEFT JOIN t_permission AS tp ON tp.id = trpm.permission_id
+        WHERE
+            trpm.role_id in (SELECT role_id FROM t_user WHERE id = #{userId,jdbcType=BIGINT});
+
+    </select>
+    <resultMap id="voMAp" type="com.example.labdemo.vo.UserCtrlVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="role" jdbcType="VARCHAR" property="role"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+    </resultMap>
+    <select id="selectAllUserVo" resultMap="voMAp">
+        SELECT
+            tu.id,
+            tu.`name`,
+            tr.remark AS `role`,
+            CASE
+                is_alive
+                WHEN 0 THEN
+                    '未激活' ELSE '已激活'
+                END AS state
+        FROM
+            t_user tu
+                LEFT JOIN t_role tr ON tu.role_id = tr.id
+    </select>
+    <resultMap id="staticsVoMap" type="com.example.labdemo.vo.statistic.SalesmanStatisticsVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+    <select id="selectStaticsVo" resultMap="staticsVoMap">
+        SELECT tu.id,tu.`name` FROM t_user tu
+    </select>
+    <resultMap id="userInfoVo" type="com.example.labdemo.vo.UserInfoVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="role" jdbcType="VARCHAR" property="role"/>
+    </resultMap>
+    <select id="selectUserInfoById" resultMap="userInfoVo">
+        SELECT
+            tu.id,
+            tu.`name`,
+            tr.remark AS `role`
+        FROM
+            t_user tu
+                LEFT JOIN t_role tr ON tu.role_id = tr.id
+        WHERE tu.id = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.labdemo.mapper.SaleNoteItemDao">
+    <resultMap id="saleNoteItemVoMap" type="com.example.labdemo.vo.salenote.SaleNoteItemVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="quantity" jdbcType="BIGINT" property="quantity"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="cost" jdbcType="DECIMAL" property="cost"/>
+        <result column="profit" jdbcType="DECIMAL" property="profit"/>
+    </resultMap>
+    <select id="getItems" resultMap="saleNoteItemVoMap">
+        SELECT
+            tp.id,
+            tp.`name`,
+            tsni.quantity,
+            tp.remark,
+        <choose>
+            <when test='type =="批发客户"'>
+                tp.wholesale_price AS price,
+                tp.purchase_price AS cost,
+                tp.wholesale_price - tp.purchase_price AS profit
+            </when>
+            <when test='type =="零售客户"'>
+                tp.retail_price AS price,
+                tp.purchase_price AS cost,
+                tp.retail_price - tp.purchase_price AS profit
+            </when>
+
+        </choose>
+        FROM
+            t_sale_note_item tsni
+                LEFT JOIN t_product tp ON tsni.product_id = tp.id
+        WHERE
+            tsni.sale_note_id = ${id}
+        ORDER BY
+            tp.id;
+    </select>
+</mapper>

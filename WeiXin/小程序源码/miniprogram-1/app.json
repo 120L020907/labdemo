@@ -1,0 +1,37 @@
+{
+    "entryPagePath": "pages/index1/index1",
+    "pages": [
+        "pages/login/login",
+        "pages/index/index",
+        "pages/index1/index1",
+        "pages/index2/index2",
+        "pages/logs/logs",
+        "pages/list/list",
+        "pages/operation/operation",
+        "pages/items/items",
+        "pages/buy1/buy1",
+        "pages/buy2/buy2",
+        "pages/buy3/buy3",
+        "pages/buy4/buy4",
+        "pages/oders/oders",
+        "pages/itemsop/itemsop",
+        "pages/changeitem/changeitem",
+        "pages/changeoder/changeoder",
+        "pages/changeoderitem/changeoderitem",
+        "pages/checkoder/checkoder",
+        "pages/storeop/storeop",
+        "pages/userop/userop",
+        "pages/changeuser/changeuser",
+        "pages/clientop/clientop",
+        "pages/changeclient/changeclient"
+
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "Weixin",
+        "navigationBarTextStyle": "black"
+    },
+    "style": "v2",
+    "sitemapLocation": "sitemap.json"
+}

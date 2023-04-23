@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.labdemo.mapper.StoreDao">
+    <resultMap id="voMap" type="com.example.labdemo.vo.store.StoreVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+    </resultMap>
+    <select id="selectAllVo" resultMap="voMap">
+        SELECT
+            ts.id,
+            ts.`name`,
+            ts.remark,
+            tu.`name` as `owner`
+        FROM
+            t_store AS ts
+            LEFT JOIN t_user AS tu ON tu.id = ts.owner_id;
+
+    </select>
+
+    <resultMap id="detailVo" type="com.example.labdemo.vo.store.StoreHouseDetailVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+    </resultMap>
+    <select id="selectDetailVo" resultMap="detailVo">
+        SELECT
+            ts.id,
+            ts.`name`,
+            ts.remark,
+            tu.`name` AS `owner`
+        FROM
+            t_store AS ts
+                LEFT JOIN t_user AS tu ON tu.id = ts.owner_id
+        WHERE
+            ts.id = ${id,jdbcType=BIGINT};
+
+    </select>
+    <select id="computePurchaseAmounts" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(IFNULL(tp.purchase_price,0)*tpoi.quantity),0)
+        FROM
+            `t_purchase_order_item` tpoi
+                LEFT JOIN t_purchase_order tpo ON tpoi.purchase_order_id=tpo.id
+                LEFT JOIN t_product tp ON tpoi.product_id = tp.id
+        WHERE tpo.stage = '已审核'
+        <if test="beginDate != null">AND tpo.create_time <![CDATA[>=]]> #{beginDate}</if>
+        <if test="endDate != null">AND tpo.create_time <![CDATA[<=]]>#{endDate}</if>
+    </select>
+    <select id="computeStoreAmounts" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(tsi.quantity*IFNULL(tp.purchase_price,0)),0)
+        FROM
+            t_store_item tsi
+                LEFT JOIN t_product tp ON tsi.product_id = tp.id
+    </select>
+</mapper>
